@@ -6,6 +6,7 @@ output: html_document
 ---
 
 # We are on the next step in setting up the NF_CORE RNAseq pipeline: the .config file.
+## This config file basically just tells Fiji what language it will speak to run nextflow
 
 This will be called nextflow.config. IT contains information for nextflow on how to talk to your
 computer. Fiji being used in class "speaks in the language of SLURM" so we need to tell nextflow that.
