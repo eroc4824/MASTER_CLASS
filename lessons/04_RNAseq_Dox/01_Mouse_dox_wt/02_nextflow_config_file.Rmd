@@ -46,3 +46,18 @@ process {
 
 
 # Ok that's the .config file (a requirement) Now let's move onto the shell script to run all this !!
+
+
+### notes from me - 
+Next, we want to log onto fiji and get all our files ready.
+
+PATH TO THIS CONFIG FILE - for the class from 2/5/2025, my path in fiji is: /scratch/Shares/rinnclass/MASTER_CLASS/STUDENTS/eroc4824/MASTER_CLASS/lessons/04_RNAseq_Dox/01_Mouse_dox_wt/dox_long
+
+In this directory^, make a file with nano nextflow.config and type:
+process {
+  executor='slurm'
+  queue='short'
+  memory='16 GB'
+  maxForks=10
+}
+
