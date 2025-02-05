@@ -35,6 +35,7 @@ the end of the document.
 ## Now we are saying email us if the pipeline ends or fails
 
 #SBATCH --mail-type=END,FAIL
+  ## note - exit status 0 means it worked, exit status 1 means it failed
 
 ## Setting the email to do this
 #SBATCH --mail-user=your@email.edu 
@@ -70,6 +71,7 @@ the end of the document.
 #SBATCH --error=nextflow.err
 
 ## Now these commands may look familiar we are just invoking them as we would type in one by one on the terminal.
+## These just tell you where it ran, which computer ran it (i.e. Fiji-1 or Fiji-2), and the date finished)
 pwd; hostname; date
 echo "Here we go You've requested $SLURM_CPUS_ON_NODE core."
 
@@ -80,6 +82,8 @@ module load singularity/3.1.1
 
 
 ## Now we are invokign nextflow and to "run" nf-core/rnaseq version 3.14.0
+## the backslash "\" means "next line / next command"
+## you CANNOT have a space at the end of any line in a bash script, so using "\" at the end of a line is useful
 nextflow run nf-core/rnaseq -r 3.14.0 \
 
 ## This is an awesome flag so that if something fails we can "resume" where it left off !!
@@ -89,14 +93,17 @@ nextflow run nf-core/rnaseq -r 3.14.0 \
 -profile singularity \
 
 ## Here we are specifying where the pipeline output will be. Make this a specifc folder
+## you want to make sure your input data is separated from your output - DON'T direct it to the same place
+## for this example class on 2025-02-05, the output directory was: _____
 ## where your run.sh, nextflow.config file are and do mkdir to make a folder then specify the path
---outdir /scratch/Shares/rinnclass/MASTER_CLASS/<DIRECTORY NAME> \
+--outdir /scratch/Shares/rinnclass/MASTER_CLASS/STUENTS/<DIRECTORY NAME> \
 
 ## This is our samplesheet that is a critical input (see 01_NF_CORE_RNAseq_samplesheet.Rmd for more info)
 ## NOTE 3.14 has updated to not needing replicates in design file but worked fine
 --input design.csv \
+## this is basically the same as sample sheet
 
-## We are telling nextflow where our fastq files are (aslo see 01_NF_CORE_RNAseq...Rmd for more)
+## We are telling nextflow where our reads/fastq files are (aslo see 01_NF_CORE_RNAseq...Rmd for more)
 --reads /scratch/Shares/rinnclass/MASTER_CLASS/DATA/mouse_wt_long_timecourse/*{_R1,_R2}.fastq.gz \
 
 ## THIS IS IMPORTANT ! WE need a genome :) I have hosted the mouse genome version we are using here:
@@ -166,7 +173,7 @@ sbatch filename.sh
 ```{bash, nextflow}
 
 #!/bin/bash
-#SBATCH -p long
+#SBATCH -p short
 #SBATCH --job-name=mouse_wt_long_dox_timecourse
 #SBATCH --mail-type=END,FAIL
 #SBATCH --mail-user=email@colorado.edu
@@ -181,15 +188,16 @@ pwd; hostname; date
 echo "Here we go You've requested $SLURM_CPUS_ON_NODE core."
 
 module load singularity/3.1.1
+module load openjdk/21.0.1
 
 nextflow run nf-core/rnaseq -r 3.14.0 \
 -resume \
 -profile singularity \
 --input samplesheet.csv \
---outdir /scratch/Shares/rinn/Kit/class_RNASeq/output_dir \
---reads /scratch/Shares/rinn/ML/mouse_wt_long_timecourse/*{_R1,_R2}.fastq.gz \
---fasta /scratch/Shares/rinn/ML/DESeq2/GENOMES/M25/GRCm38.p6.genome.fa \
---gtf /scratch/Shares/rinn/ML/DESeq2/GENOMES/M25/gencode.vM25.annotation.gtf \
+--outdir /scratch/Shares/rinnclass/MASTER_CLASS/STUDENTS/eroc4824/MASTER_CLASS/lessons/04_RNAseq_Dox/01_Mouse_dox_wt/dox_long/dox_long_out \
+--reads /scratch/Shares/rinnclass/MASTER_CLASS/DATA/mouse_wt_long_timecourse/*{_R1,_R2}.fastq.gz \
+--fasta /scratch/Shares/rinnclass/MASTER_CLASS/GENOMES/M25/GRCm38.p6.genome.fa \
+--gtf /scratch/Shares/rinnclass/MASTER_CLASS/GENOMES/M25/gencode.vM25.annotation.gtf \
 --pseudo_aligner salmon \
 --gencode \
 --email emai1@colorado.edu \
@@ -199,3 +207,4 @@ nextflow run nf-core/rnaseq -r 3.14.0 \
 
 ```
 
+### note - the top section of this script is the bash portion (the language is bash), but then once you "activate" nextflow, you have to write it in nextflow language format
